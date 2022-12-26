@@ -3,8 +3,8 @@
 
 type User {
   id: ID!
-  name: String
   email: String
+  isAdmin: Boolean
   password: PasswordState
   firstName: String
   lastName: String
@@ -28,8 +28,8 @@ input UserWhereInput {
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]
   id: IDFilter
-  name: StringFilter
   email: StringFilter
+  isAdmin: BooleanFilter
   firstName: StringFilter
   lastName: StringFilter
   createdTasks: TaskManyRelationFilter
@@ -75,6 +75,11 @@ input NestedStringFilter {
   not: NestedStringFilter
 }
 
+input BooleanFilter {
+  equals: Boolean
+  not: BooleanFilter
+}
+
 input TaskManyRelationFilter {
   every: TaskWhereInput
   some: TaskWhereInput
@@ -83,8 +88,8 @@ input TaskManyRelationFilter {
 
 input UserOrderByInput {
   id: OrderDirection
-  name: OrderDirection
   email: OrderDirection
+  isAdmin: OrderDirection
   firstName: OrderDirection
   lastName: OrderDirection
 }
@@ -95,8 +100,8 @@ enum OrderDirection {
 }
 
 input UserUpdateInput {
-  name: String
   email: String
+  isAdmin: Boolean
   password: String
   firstName: String
   lastName: String
@@ -117,8 +122,8 @@ input UserUpdateArgs {
 }
 
 input UserCreateInput {
-  name: String
   email: String
+  isAdmin: Boolean
   password: String
   firstName: String
   lastName: String
@@ -441,9 +446,10 @@ type UserAuthenticationWithPasswordFailure {
 }
 
 input CreateInitialUserInput {
-  name: String
   email: String
   password: String
+  firstName: String
+  lastName: String
 }
 
 type Query {
