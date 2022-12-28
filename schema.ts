@@ -10,9 +10,11 @@ import {
   select,
   integer,
   checkbox,
+  virtual,
 } from '@keystone-6/core/fields';
 
 import type { Lists } from '.keystone/types';
+import { graphql } from '@graphql-ts/schema';
 
 export const lists: Lists = {
   User: list({
@@ -38,8 +40,8 @@ export const lists: Lists = {
           isRequired: true
         }
       }),
-      createdTasks: relationship({ ref: 'Task.createdBy', many: true }),
-      assignedTasks: relationship({ ref: 'Task.assignedUser', many: true }),
+      createdTasks: relationship({ ref: 'Task.createdBy', many: true, ui: {labelField: 'name'} }),
+      assignedTasks: relationship({ ref: 'Task.assignedUser', many: true, ui: {labelField: 'name'} }),
     },
     access: {
       operation: {
@@ -57,8 +59,8 @@ export const lists: Lists = {
   AssigneeUser: list({
     access: allowAll,
     fields: {
-      project: relationship({ ref: 'Project' }),
-      user: relationship({ ref: 'User' }),
+      project: relationship({ ref: 'Project', ui: {labelField: 'title'} }),
+      user: relationship({ ref: 'User', ui: {labelField: 'email'} }),
       role: select({
         type: 'enum',
         options: [
@@ -84,15 +86,15 @@ export const lists: Lists = {
           isRequired: true
         }
       }),
-      tasks: relationship({ ref: 'Task.project', many: true })
+      tasks: relationship({ ref: 'Task.project', many: true, ui: { labelField: 'name'} })
     }
   }),
   Task: list({
     access: allowAll,
     fields: {
-      project: relationship({ ref: 'Project.tasks' }),
-      createdBy: relationship({ ref: 'User.createdTasks' }),
-      assignedUser: relationship({ ref: 'User.assignedTasks' }),
+      project: relationship({ ref: 'Project.tasks', ui: {labelField: 'title'} }),
+      createdBy: relationship({ ref: 'User.createdTasks', ui: {labelField: 'email'} }),
+      assignedUser: relationship({ ref: 'User.assignedTasks', ui: {labelField: 'email'} }),
       dueDate: timestamp(),
       estimatedTime: integer(),
       priority: select({
