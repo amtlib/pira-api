@@ -12,6 +12,8 @@ type User {
   createdTasksCount(where: TaskWhereInput! = {}): Int
   assignedTasks(where: TaskWhereInput! = {}, orderBy: [TaskOrderByInput!]! = [], take: Int, skip: Int! = 0): [Task!]
   assignedTasksCount(where: TaskWhereInput! = {}): Int
+  comments(where: CommentWhereInput! = {}, orderBy: [CommentOrderByInput!]! = [], take: Int, skip: Int! = 0): [Comment!]
+  commentsCount(where: CommentWhereInput! = {}): Int
 }
 
 type PasswordState {
@@ -34,6 +36,7 @@ input UserWhereInput {
   lastName: StringFilter
   createdTasks: TaskManyRelationFilter
   assignedTasks: TaskManyRelationFilter
+  comments: CommentManyRelationFilter
 }
 
 input IDFilter {
@@ -86,6 +89,12 @@ input TaskManyRelationFilter {
   none: TaskWhereInput
 }
 
+input CommentManyRelationFilter {
+  every: CommentWhereInput
+  some: CommentWhereInput
+  none: CommentWhereInput
+}
+
 input UserOrderByInput {
   id: OrderDirection
   email: OrderDirection
@@ -107,6 +116,7 @@ input UserUpdateInput {
   lastName: String
   createdTasks: TaskRelateToManyForUpdateInput
   assignedTasks: TaskRelateToManyForUpdateInput
+  comments: CommentRelateToManyForUpdateInput
 }
 
 input TaskRelateToManyForUpdateInput {
@@ -114,6 +124,13 @@ input TaskRelateToManyForUpdateInput {
   set: [TaskWhereUniqueInput!]
   create: [TaskCreateInput!]
   connect: [TaskWhereUniqueInput!]
+}
+
+input CommentRelateToManyForUpdateInput {
+  disconnect: [CommentWhereUniqueInput!]
+  set: [CommentWhereUniqueInput!]
+  create: [CommentCreateInput!]
+  connect: [CommentWhereUniqueInput!]
 }
 
 input UserUpdateArgs {
@@ -129,11 +146,17 @@ input UserCreateInput {
   lastName: String
   createdTasks: TaskRelateToManyForCreateInput
   assignedTasks: TaskRelateToManyForCreateInput
+  comments: CommentRelateToManyForCreateInput
 }
 
 input TaskRelateToManyForCreateInput {
   create: [TaskCreateInput!]
   connect: [TaskWhereUniqueInput!]
+}
+
+input CommentRelateToManyForCreateInput {
+  create: [CommentCreateInput!]
+  connect: [CommentWhereUniqueInput!]
 }
 
 type AssigneeUser {
@@ -272,6 +295,9 @@ type Task {
   description: String
   status: TaskStatusType
   parentTask: Task
+  comments(where: CommentWhereInput! = {}, orderBy: [CommentOrderByInput!]! = [], take: Int, skip: Int! = 0): [Comment!]
+  commentsCount(where: CommentWhereInput! = {}): Int
+  tags: String
 }
 
 scalar DateTime @specifiedBy(url: "https://datatracker.ietf.org/doc/html/rfc3339#section-5.6")
@@ -309,6 +335,8 @@ input TaskWhereInput {
   description: StringFilter
   status: TaskStatusTypeNullableFilter
   parentTask: TaskWhereInput
+  comments: CommentManyRelationFilter
+  tags: StringFilter
 }
 
 input DateTimeNullableFilter {
@@ -355,6 +383,7 @@ input TaskOrderByInput {
   name: OrderDirection
   description: OrderDirection
   status: OrderDirection
+  tags: OrderDirection
 }
 
 input TaskUpdateInput {
@@ -368,6 +397,8 @@ input TaskUpdateInput {
   description: String
   status: TaskStatusType
   parentTask: TaskRelateToOneForUpdateInput
+  comments: CommentRelateToManyForUpdateInput
+  tags: String
 }
 
 input TaskRelateToOneForUpdateInput {
@@ -392,11 +423,56 @@ input TaskCreateInput {
   description: String
   status: TaskStatusType
   parentTask: TaskRelateToOneForCreateInput
+  comments: CommentRelateToManyForCreateInput
+  tags: String
 }
 
 input TaskRelateToOneForCreateInput {
   create: TaskCreateInput
   connect: TaskWhereUniqueInput
+}
+
+type Comment {
+  id: ID!
+  task: Task
+  text: String
+  author: User
+}
+
+input CommentWhereUniqueInput {
+  id: ID
+}
+
+input CommentWhereInput {
+  AND: [CommentWhereInput!]
+  OR: [CommentWhereInput!]
+  NOT: [CommentWhereInput!]
+  id: IDFilter
+  task: TaskWhereInput
+  text: StringFilter
+  author: UserWhereInput
+}
+
+input CommentOrderByInput {
+  id: OrderDirection
+  text: OrderDirection
+}
+
+input CommentUpdateInput {
+  task: TaskRelateToOneForUpdateInput
+  text: String
+  author: UserRelateToOneForUpdateInput
+}
+
+input CommentUpdateArgs {
+  where: CommentWhereUniqueInput!
+  data: CommentUpdateInput!
+}
+
+input CommentCreateInput {
+  task: TaskRelateToOneForCreateInput
+  text: String
+  author: UserRelateToOneForCreateInput
 }
 
 """
@@ -429,6 +505,12 @@ type Mutation {
   updateTasks(data: [TaskUpdateArgs!]!): [Task]
   deleteTask(where: TaskWhereUniqueInput!): Task
   deleteTasks(where: [TaskWhereUniqueInput!]!): [Task]
+  createComment(data: CommentCreateInput!): Comment
+  createComments(data: [CommentCreateInput!]!): [Comment]
+  updateComment(where: CommentWhereUniqueInput!, data: CommentUpdateInput!): Comment
+  updateComments(data: [CommentUpdateArgs!]!): [Comment]
+  deleteComment(where: CommentWhereUniqueInput!): Comment
+  deleteComments(where: [CommentWhereUniqueInput!]!): [Comment]
   endSession: Boolean!
   authenticateUserWithPassword(email: String!, password: String!): UserAuthenticationWithPasswordResult
   createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
@@ -465,6 +547,9 @@ type Query {
   tasks(where: TaskWhereInput! = {}, orderBy: [TaskOrderByInput!]! = [], take: Int, skip: Int! = 0): [Task!]
   task(where: TaskWhereUniqueInput!): Task
   tasksCount(where: TaskWhereInput! = {}): Int
+  comments(where: CommentWhereInput! = {}, orderBy: [CommentOrderByInput!]! = [], take: Int, skip: Int! = 0): [Comment!]
+  comment(where: CommentWhereUniqueInput!): Comment
+  commentsCount(where: CommentWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 }

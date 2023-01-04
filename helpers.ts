@@ -9,7 +9,6 @@ export const isAdmin = async (email: string, context: KeystoneContextFromListTyp
         },
         query: 'isAdmin'
       });
-  console.log("isAdmin", isAdminField)
   return true;
   return isAdminField;
 }

@@ -21,6 +21,7 @@ model User {
   lastName               String         @default("")
   createdTasks           Task[]         @relation("Task_createdBy")
   assignedTasks          Task[]         @relation("Task_assignedUser")
+  comments               Comment[]      @relation("Comment_author")
   from_AssigneeUser_user AssigneeUser[] @relation("AssigneeUser_user")
 }
 
@@ -60,10 +61,24 @@ model Task {
   status               String?   @default("backlog")
   parentTask           Task?     @relation("Task_parentTask", fields: [parentTaskId], references: [id])
   parentTaskId         String?   @map("parentTask")
+  comments             Comment[] @relation("Comment_task")
+  tags                 String    @default("")
   from_Task_parentTask Task[]    @relation("Task_parentTask")
 
   @@index([projectId])
   @@index([createdById])
   @@index([assignedUserId])
   @@index([parentTaskId])
+}
+
+model Comment {
+  id       String  @id @default(cuid())
+  task     Task?   @relation("Comment_task", fields: [taskId], references: [id])
+  taskId   String? @map("task")
+  text     String  @default("")
+  author   User?   @relation("Comment_author", fields: [authorId], references: [id])
+  authorId String? @map("author")
+
+  @@index([taskId])
+  @@index([authorId])
 }

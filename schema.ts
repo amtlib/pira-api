@@ -42,6 +42,7 @@ export const lists: Lists = {
       }),
       createdTasks: relationship({ ref: 'Task.createdBy', many: true, ui: {labelField: 'name'} }),
       assignedTasks: relationship({ ref: 'Task.assignedUser', many: true, ui: {labelField: 'name'} }),
+      comments: relationship({ ref: 'Comment.author', many: true, ui: {labelField: 'text'}})
     },
     access: {
       operation: {
@@ -118,7 +119,17 @@ export const lists: Lists = {
         ],
         defaultValue: 'backlog'
       }),
-      parentTask: relationship({ ref: 'Task' })
+      parentTask: relationship({ ref: 'Task' }),
+      comments: relationship({ ref: 'Comment.task', many: true, ui: {labelField: 'text'}}),
+      tags: text(),
+    }
+  }),
+  Comment: list({
+    access: allowAll,
+    fields: {
+      task: relationship({ ref: 'Task.comments' }),
+      text: text(),
+      author: relationship({ref: 'User.comments' })
     }
   })
 
