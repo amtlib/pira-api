@@ -65,10 +65,10 @@ export const lists: Lists = {
       role: select({
         type: 'enum',
         options: [
-          { label: "Administrator", value: "admin" },
-          { label: "Kierownik", value: "manager" },
-          { label: "Klient", value: "client" },
-          { label: "Uzytkownik", value: "user" },
+          { label: "Admin", value: "admin" },
+          { label: "Manager", value: "manager" },
+          { label: "Client", value: "client" },
+          { label: "User", value: "user" },
         ]
       })
     }
@@ -87,7 +87,7 @@ export const lists: Lists = {
           isRequired: true
         }
       }),
-      tasks: relationship({ ref: 'Task.project', many: true, ui: { labelField: 'name'} })
+      tasks: relationship({ ref: 'Task.project', many: true, ui: { labelField: 'name'} }),
     }
   }),
   Task: list({
